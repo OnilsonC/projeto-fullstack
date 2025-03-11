@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/usuario")
+@CrossOrigin
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -20,6 +21,11 @@ public class UsuarioController {
     @GetMapping
     public List<UsuarioDTO> listarTodos() {
         return usuarioService.listarTodas();
+    }
+
+    @GetMapping("/buscar-id/{id}")
+    public UsuarioDTO buscarPorId(@PathVariable ("id") Long id) {
+        return usuarioService.buscarPorId(id);
     }
 
     @PostMapping
