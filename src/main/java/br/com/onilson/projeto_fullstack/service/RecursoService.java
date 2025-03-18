@@ -1,14 +1,12 @@
 package br.com.onilson.projeto_fullstack.service;
 
 import br.com.onilson.projeto_fullstack.dto.RecursoDTO;
-import br.com.onilson.projeto_fullstack.dto.UsuarioDTO;
 import br.com.onilson.projeto_fullstack.entity.Recurso;
 import br.com.onilson.projeto_fullstack.repository.RecursoRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class RecursoService {
@@ -40,7 +38,7 @@ public class RecursoService {
         return new RecursoDTO(recursoRepository.save(recurso));
     }
 
-    public void excluir (Long id) {
+    public void excluir(Long id) {
         Recurso recurso = recursoRepository.findById(id).get();
         recursoRepository.delete(recurso);
     }
