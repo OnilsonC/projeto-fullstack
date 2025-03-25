@@ -9,5 +9,3 @@ ALTER SEQUENCE recurso_id_seq RESTART WITH 2;
 
 insert into perfil_usuario (id, usuario_id, perfil_id) values (1, 1, 1);
 ALTER SEQUENCE perfil_usuario_seq RESTART WITH 2;
-
-insert into permissao_perfil_recurso ()
