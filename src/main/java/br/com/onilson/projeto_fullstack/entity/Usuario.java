@@ -1,6 +1,7 @@
 package br.com.onilson.projeto_fullstack.entity;
 
 import br.com.onilson.projeto_fullstack.dto.UsuarioDTO;
+import br.com.onilson.projeto_fullstack.entity.enums.TipoSituacaoUsuario;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,10 @@ public class Usuario {
 
     @Column(nullable = false)
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoSituacaoUsuario situacao;
 
     public Usuario(UsuarioDTO usuarioDTO) {
         BeanUtils.copyProperties(usuarioDTO, this);

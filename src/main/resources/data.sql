@@ -1,4 +1,4 @@
-insert into usuario (id, nome, login, senha, email) values (1, 'Onilson', 'onilson', '1234', 'teste@teste.com');
+insert into usuario (id, nome, login, senha, email, situacao) values (1, 'Onilson', 'onilson', '1234', 'teste@teste.com', 'ATIVO');
 ALTER SEQUENCE usuario_id_seq RESTART WITH 2;
 
 insert into perfil (id, descricao)  values (1, 'Admin');

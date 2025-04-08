@@ -1,6 +1,7 @@
 package br.com.onilson.projeto_fullstack.security;
 
 import br.com.onilson.projeto_fullstack.security.jwt.AuthEntryPointJwt;
+import br.com.onilson.projeto_fullstack.security.jwt.AuthFilterToken;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -34,6 +36,11 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public AuthFilterToken authFilterToken() {
+        return new AuthFilterToken();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults());
         http.csrf(csrf -> csrf.disable())
@@ -43,6 +50,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/usuario/**").permitAll()
                         .anyRequest().authenticated());
 
+        http.addFilterBefore(authFilterToken(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
