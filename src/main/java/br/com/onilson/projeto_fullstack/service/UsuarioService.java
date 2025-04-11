@@ -2,13 +2,18 @@ package br.com.onilson.projeto_fullstack.service;
 
 import br.com.onilson.projeto_fullstack.dto.UsuarioDTO;
 import br.com.onilson.projeto_fullstack.entity.Usuario;
+import br.com.onilson.projeto_fullstack.entity.UsuarioCheck;
 import br.com.onilson.projeto_fullstack.entity.enums.TipoSituacaoUsuario;
+import br.com.onilson.projeto_fullstack.repository.UsuarioCheckRepository;
 import br.com.onilson.projeto_fullstack.repository.UsuarioRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UsuarioService {
@@ -16,12 +21,14 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final UsuarioCheckRepository usuarioCheckRepository;
 
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder,
-                          EmailService emailService) {
+                          EmailService emailService, UsuarioCheckRepository usuarioCheckRepository) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService= emailService;
+        this.usuarioCheckRepository = usuarioCheckRepository;
     }
 
     public List<UsuarioDTO> listarTodas() {
@@ -42,8 +49,33 @@ public class UsuarioService {
         usuario.setId(null);
         usuarioRepository.save(usuario);
 
+        UsuarioCheck check = new UsuarioCheck();
+        check.setUsuario(usuario);
+        check.setUuid(UUID.randomUUID());
+        check.setDataExpiracao(Instant.now().plusMillis(900000));
+        usuarioCheckRepository.save(check);
+
         emailService.enviarEmailDestinatario(usuario.getEmail(), "Novo usuário cadastrado",
-                "Você está recebendo um email de cadastro");
+                "Você está recebendo um email de cadastro e o n° de validação é " + check.getUuid());
+    }
+
+    public String checarCadastro(String uuid) {
+        System.out.println(uuid);
+        Optional<UsuarioCheck>  usuarioCheck = usuarioCheckRepository.findByUuid(UUID.fromString(uuid));
+        if (usuarioCheck != null) {
+            if(usuarioCheck.get().getDataExpiracao().compareTo(Instant.now()) >= 0) {
+                Usuario usuario = usuarioCheck.get().getUsuario();
+                usuario.setSituacao(TipoSituacaoUsuario.ATIVO);
+                usuarioRepository.save(usuario);
+
+                return "Usuário verificado";
+            }else {
+                usuarioCheckRepository.delete(usuarioCheck.get());
+                return "Tempo de verificação expirado";
+            }
+        } else {
+            return "Usuário não verificado";
+        }
     }
 
     public UsuarioDTO alterar(UsuarioDTO usuarioDTO) {

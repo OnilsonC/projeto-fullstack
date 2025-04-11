@@ -30,4 +30,9 @@ public class AuthController {
     public void inserirNovoUsuario(@RequestBody UsuarioDTO usuarioDTO) {
          usuarioService.inserirNovoUsuario(usuarioDTO);
     }
+
+    @GetMapping("/verificarcadastro/{uuid}")
+    public String cadastroCheck(@PathVariable("uuid") String uuid) {
+        return usuarioService.checarCadastro(uuid);
+    }
 }
